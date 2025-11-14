@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maps — DiQster Mods</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="site-wrap">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html"><img src="logo.png" alt="DiQster logo" /></a>
+        <nav class="main-nav">
+          <a href="truckskin.html">Truck Skins</a>
+          <a href="trailerskin.html">Trailer Skins</a>
+          <a href="busskin.html">Bus Skins</a>
+          <a href="maps.html">Maps</a>
+          <a href="sound.html">Sound</a>
+          <a href="others.html">Others</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container page-main">
+      <section class="page-head">
+        <h1>Maps</h1>
+        <p class="lead">Maps and map expansions.</p>
+      </section>
+
+      <section>
+        <div id="gallery" class="grid" data-category="maps"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <small>© DiQster Mods — Links to external hosts only.</small>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+  <script>renderGallery('maps', 'gallery');</script>
+</body>
+</html>

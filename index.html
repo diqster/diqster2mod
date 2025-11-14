@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- HTML -->
+<!-- أيقونات ثابتة في أعلى الصفحة -->
+<div class="social-icons top-right">
+  <a href="https://www.instagram.com/diqster.gamer/" target="_blank" class="instagram"></a>
+  <a href="https://www.tiktok.com/@diqster5" target="_blank" class="tiktok"></a>
+  <a href="https://www.facebook.com/DiQster.gaming" target="_blank" class="facebook"></a>
+  <a href="https://www.youtube.com/@diqster1687" target="_blank" class="youtube"></a>
+  <a href="https://discord.gg/mAGSHehH" target="_blank" class="discord"></a>
+</div>
+
+<!-- أيقونات ثابتة في أسفل الصفحة -->
+<div class="social-icons bottom-right">
+  <a href="https://www.instagram.com/diqster.gamer/" target="_blank" class="instagram"></a>
+  <a href="https://www.tiktok.com/@diqster5" target="_blank" class="tiktok"></a>
+  <a href="https://www.facebook.com/DiQster.gaming" target="_blank" class="facebook"></a>
+  <a href="https://www.youtube.com/@diqster1687" target="_blank" class="youtube"></a>
+  <a href="https://discord.gg/mAGSHehH" target="_blank" class="discord"></a>
+</div>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DiQster Mods — Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="site-wrap">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html"><img src="logo.png" alt="DiQster logo" /></a>
+        <nav class="main-nav">
+          <a href="truckskin.html">Truck Skins</a>
+          <a href="trailerskin.html">Trailer Skins</a>
+          <a href="busskin.html">Bus Skins</a>
+          <a href="maps.html">Maps</a>
+          <a href="sound.html">Sound</a>
+          <a href="others.html">Others</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-inner container">
+          <h1>DiQster — ETS2 Mods & Skins</h1>
+          <p class="subtitle">High-quality skins, maps and sound packs. All downloads use external links (you provide).</p>
+          <div class="cta-row">
+            <a class="btn" href="truckskin.html">Browse Truck Skins</a>
+            <a class="btn ghost" href="maps.html">Browse Maps</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="container featured">
+        <h2>Latest Additions</h2>
+        <div id="featured-grid" class="grid"></div>
+        <p class="hint">To add new items use the hidden upload page (only you can access it).</p>
+      </section>
+
+      <section class="container sections">
+        <h2>Categories</h2>
+        <div class="cards">
+          <a class="cat" href="truckskin.html">Truck Skins</a>
+          <a class="cat" href="trailerskin.html">Trailer Skins</a>
+          <a class="cat" href="busskin.html">Bus Skins</a>
+          <a class="cat" href="maps.html">Maps</a>
+          <a class="cat" href="sound.html">Sound</a>
+          <a class="cat" href="others.html">Others</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <nav class="footer-nav">
+          <a href="index.html">Home</a> · <a href="#">About</a> · <a href="#">Contact</a> · <a href="#">Privacy</a>
+        </nav>
+        <small>© DiQster Mods — For Euro Truck Simulator 2. Links point to external hosting.</small>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+  <script>renderGallery('all', 'featured-grid');</script>
+</body>
+</html>
