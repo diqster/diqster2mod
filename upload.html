@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upload — DiQster Mods</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .container{max-width:900px;margin:24px auto;padding:0 16px}
+    label{display:block;margin:12px 0}
+    input[type="text"], input[type="url"], textarea, select{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px}
+    .form-actions{margin-top:12px;display:flex;gap:8px}
+    .btn{padding:8px 14px;border-radius:8px;border:none;background:#1f6feb;color:#fff;cursor:pointer}
+    .btn.ghost{background:#eee;color:#111}
+    .hint{margin-top:12px;color:#333}
+    .progress{margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="site-wrap">
+    <header class="site-header small">
+      <div class="container header-inner">
+        <a class="brand" href="index.html"><img src="logo.png" alt="DiQster logo" style="height:40px" /></a>
+      </div>
+    </header>
+
+    <main class="container upload-page">
+      <h1>Upload / Add Mod</h1>
+      <p class="lead">رفع السكِنات سيتم حفظه إلى Firebase (Storage + Firestore) ليشهده جميع الزوار.</p>
+
+      <form id="uploadForm" class="upload-form">
+        <label>Mod Name
+          <input type="text" name="name" required />
+        </label>
+
+        <label>Author
+          <input type="text" name="author" placeholder="Your name or alias" />
+        </label>
+
+        <label>Category
+          <select name="category" required>
+            <option value="truck">Truck</option>
+            <option value="trailer">Trailer</option>
+            <option value="bus">Bus</option>
+            <option value="maps">Maps</option>
+            <option value="sound">Sound</option>
+            <option value="others">Others</option>
+          </select>
+        </label>
+
+        <label>External Download Link
+          <input type="url" name="link" placeholder="https://example.com/file.zip" required />
+        </label>
+
+        <label>Preview Image (URL or choose local file)
+          <input type="url" name="imgurl" placeholder="https://... or leave to upload file" />
+          <input type="file" id="imgfile" accept="image/*" />
+        </label>
+
+        <label>Description
+          <textarea name="description" rows="4" placeholder="Short description"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button class="btn" type="submit">Add Mod</button>
+          <button class="btn ghost" type="button" id="clearStorage">Clear Local Data</button>
+        </div>
+      </form>
+
+      <div id="upload-msg" class="hint"></div>
+      <div id="upload-progress" class="progress"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container"><small>Hidden upload page — only allowed users should access it.</small></div>
+    </footer>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBwi9dCiuDWztQZpY-eoFMcFodvbUoxlpU",
+      authDomain: "diqster.firebaseapp.com",
+      projectId: "diqster",
+      storageBucket: "diqster.firebasestorage.app",
+      messagingSenderId: "835809599492",
+      appId: "1:835809599492:web:1e3bb579e13755ee561551",
+      measurementId: "G-RRNM724XPC"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+    const db = firebase.firestore();
+
+    const form = document.getElementById('uploadForm');
+    const imgfile = document.getElementById('imgfile');
+    const msg = document.getElementById('upload-msg');
+    const prog = document.getElementById('upload-progress');
+    const clearBtn = document.getElementById('clearStorage');
+
+    clearBtn.addEventListener('click', () => {
+      localStorage.removeItem('mods');
+      msg.textContent = 'Local data cleared.';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      prog.textContent = '';
+
+      const formData = new FormData(form);
+      const name = formData.get('name').trim();
+      const author = formData.get('author').trim() || 'Unknown';
+      const category = formData.get('category');
+      const link = formData.get('link').trim();
+      const imgurl = formData.get('imgurl').trim();
+      const desc = formData.get('description').trim();
+
+      if (!name || !category || !link) {
+        msg.textContent = 'الرجاء تعبئة الحقول المطلوبة.';
+        return;
+      }
+
+      try {
+        let finalImgUrl = imgurl || '';
+        if (imgfile.files && imgfile.files[0]) {
+          const file = imgfile.files[0];
+          const ext = file.name.split('.').pop();
+          const filename = `mods/${Date.now()}_${Math.random().toString(36).slice(2,9)}.${ext}`;
+          const storageRef = storage.ref().child(filename);
+          const uploadTask = storageRef.put(file);
+
+          uploadTask.on('state_changed', snapshot => {
+            const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+            prog.textContent = `Uploading image: ${pct}%`;
+          }, err => {
+            msg.textContent = 'خطأ أثناء رفع الصورة: ' + err.message;
+          }, async () => {
+            finalImgUrl = await uploadTask.snapshot.ref.getDownloadURL();
+            prog.textContent = 'Uploaded image ✓';
+            await saveModDoc();
+          });
+          return;
+        }
+
+        await saveModDoc();
+
+        async function saveModDoc() {
+          const doc = {
+            name,
+            author,
+            category,
+            link,
+            imgUrl: finalImgUrl || '',
+            description: desc || '',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          };
+          const res = await db.collection('mods').add(doc);
+          msg.innerHTML = `تم رفع السكين بنجاح. <br>معرّف: <code>${res.id}</code>`;
+          form.reset();
+          prog.textContent = '';
+        }
+
+      } catch (err) {
+        msg.textContent = 'حدث خطأ: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
